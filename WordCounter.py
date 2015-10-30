@@ -16,11 +16,13 @@ class WordCounter(object):
 
     def _uncamelCase(self, word):
         accumulator = ""
+        should_yield = lambda : accumulator and not accumulator.isdigit()
+
         for (location, letter) in enumerate(word):
             if letter.isalnum():
                 if letter.isupper():
                     if accumulator and accumulator[-1].islower():
-                        if accumulator:
+                        if should_yield():
                             yield accumulator
                             accumulator = ""
                     if accumulator and accumulator[-1].isupper() and (location +1 < len(word)):
@@ -29,10 +31,10 @@ class WordCounter(object):
                             accumulator = ""
                 accumulator += letter
             else:
-                if accumulator:
+                if should_yield():
                     yield accumulator
                 accumulator = ""
-        if accumulator:
+        if should_yield():
             yield accumulator
 
     def mostUsedWords(self, number):
@@ -48,7 +50,4 @@ if __name__ == "__main__":
     for (word,count) in counter.mostUsedWords(100):
         index += 1
         print index, word, count
-
-
-
 
